@@ -124,14 +124,14 @@ class Model(CorpusDocuments, CorpusQueries):
         # test melihat representasi vector dari sebuah dokumen & query
 
     def save_lsa(self):
-        current_filename = f'lsa-{int(datetime.datetime.now().timestamp())}.pkl'
+        current_filename = f'trained_model/lsa-{int(datetime.datetime.now().timestamp())}.pkl'
         cprint(f"Saving lsa to {current_filename}", "blue")
         with open(current_filename, 'wb') as f:
             pickle.dump([self.lsi_model], f)
         cprint(f"Saved", "green")
 
     def load_lsa(self, timestamp):
-        current_filename = f'lsa-{timestamp}.pkl'
+        current_filename = f'trained_model/lsa-{timestamp}.pkl'
         cprint(f"Loading lsa {current_filename}", "blue")
         with open(current_filename, 'rb') as f:
             [self.lsi_model] = pickle.load(f)
@@ -191,14 +191,14 @@ class Model(CorpusDocuments, CorpusQueries):
         # print(self.ranker.predict(X))
 
     def save_model(self):
-        current_filename = f'model-{int(datetime.datetime.now().timestamp())}.pkl'
+        current_filename = f'trained_model/model-{int(datetime.datetime.now().timestamp())}.pkl'
         cprint(f"Saving model to {current_filename}", "blue")
         with open(current_filename, 'wb') as f:
             pickle.dump([self.ranker], f)
         cprint(f"Saved", "green")
 
     def load_model(self, timestamp):
-        current_filename=f'model-{timestamp}.pkl'
+        current_filename = f'trained_model/model-{timestamp}.pkl'
         cprint(f"Loading model {current_filename}", "blue")
         with open(current_filename, 'rb') as f:
             [self.ranker] = pickle.load(f)
