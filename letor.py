@@ -109,7 +109,6 @@ class Model(CorpusDocuments, CorpusQueries):
 
     def generate_lsa(self):
         
-
         self.dictionary = Dictionary()
         self.bow_corpus = [self.dictionary.doc2bow(doc, allow_update = True) for doc in self.documents.values()]
         self.LsiModel = LsiModel(self.bow_corpus, num_topics = self.NUM_LATENT_TOPICS) # 200 latent topics
