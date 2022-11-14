@@ -2,6 +2,12 @@ import subprocess
 from termcolor import colored, cprint
 from tqdm import tqdm
 import random
+import lightgbm as lgb
+import numpy as np
+
+from gensim.models import TfidfModel
+from gensim.models import LsiModel
+from gensim.corpora import Dictionary
 
 def set_up_data():
     cprint("Step 1: Setting up data","yellow")
@@ -59,6 +65,7 @@ class CorpusQueries(object):
 class Model(CorpusDocuments, CorpusQueries):
 
     NUM_NEGATIVES = 1
+    NUM_LATENT_TOPICS = 200
 
     def __init__(self, doc_path: str, query_path:str, qrel_path:str):
         cprint(f"Generating model", "yellow")
@@ -67,6 +74,7 @@ class Model(CorpusDocuments, CorpusQueries):
         self.q_docs_rel = dict()
         self.init_qrels(qrel_path)
         self.generate_dataset()
+        self.generate_lsa()
         cprint(f"Generated model", "yellow")
         pass
     
@@ -99,6 +107,20 @@ class Model(CorpusDocuments, CorpusQueries):
         assert sum(self.group_qid_count) == len(self.dataset), "ada yang salah"
         print(self.dataset[:2])
 
+    def generate_lsa(self):
+        
+
+        self.dictionary = Dictionary()
+        self.bow_corpus = [self.dictionary.doc2bow(doc, allow_update = True) for doc in self.documents.values()]
+        self.LsiModel = LsiModel(self.bow_corpus, num_topics = self.NUM_LATENT_TOPICS) # 200 latent topics
+
+        # test melihat representasi vector dari sebuah dokumen & query
+    
+    def vector_rep(self, text):
+        rep = [topic_value for (_, topic_value) in self.LsiModel[self.dictionary.doc2bow(text)]]
+        return rep if len(rep) == self.NUM_LATENT_TOPICS else [0.] * self.NUM_LATENT_TOPICS
+
+
     def __str__(self) -> str:
         return f'''\
 {CorpusDocuments.__str__(self)}
@@ -111,6 +133,9 @@ def main():
     # print(training_documents)
     # print(queries_documents)
     # print(model)
+    # print(model.vector_rep(model.documents["MED-329"]))
+    # print(model.vector_rep(model.queries["PLAIN-2435"]))
+    print()
 
 
 main()
